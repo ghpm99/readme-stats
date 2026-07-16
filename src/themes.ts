@@ -21,7 +21,7 @@ export const themes: Record<string, Theme> = {
     iconColor: '79dafa',
     textColor: 'f8f8f2',
     bgColor: '282a36',
-    borderColor: 'e4e2e2',
+    borderColor: '44475a',
   },
 };
 

@@ -41,7 +41,7 @@ export function renderError(message: string, secondaryMessage = ''): string {
     .text { font: 600 16px 'Segoe UI', Ubuntu, Sans-Serif; fill: #2f80ed; }
     .small { font: 600 12px 'Segoe UI', Ubuntu, Sans-Serif; fill: #252525; }
   </style>
-  <rect x="0.5" y="0.5" width="494" height="99%" rx="4.5" fill="#fffefe" stroke="#e4e2e2"/>
+  <rect x="0.5" y="0.5" width="494" height="119" rx="12" fill="#fffefe" stroke="#e4e2e2"/>
   <text x="25" y="45" class="text">Something went wrong!</text>
   <text x="25" y="75" class="small">${encodeHTML(message)}</text>
   <text x="25" y="95" class="small">${encodeHTML(secondaryMessage)}</text>

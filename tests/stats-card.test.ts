@@ -4,7 +4,7 @@ import type { UserStats } from '../src/fetchers/stats';
 import { getTheme } from '../src/themes';
 
 const stats: UserStats = {
-  name: 'Gustavo',
+  name: 'ghpm99',
   totalStars: 120,
   totalCommits: 1500,
   totalPRs: 80,
@@ -25,9 +25,10 @@ const baseOptions: StatsCardOptions = {
 describe('renderStatsCard', () => {
   it('renders title, values and rank level', () => {
     const svg = renderStatsCard(stats, baseOptions);
-    expect(svg).toContain('Gustavo&#39;s GitHub Stats');
+    expect(svg).toContain('ghpm99&#39;s GitHub Stats');
     expect(svg).toContain('1.5k');
     expect(svg).toContain('A+');
+    expect(svg).toContain('TOP 20%');
     expect(svg).toContain('data-testid="stars"');
   });
 
@@ -40,9 +41,9 @@ describe('renderStatsCard', () => {
 
   it('hides stats listed in hide', () => {
     const svg = renderStatsCard(stats, { ...baseOptions, hide: ['issues', 'contribs'] });
-    expect(svg).not.toContain('Total Issues');
-    expect(svg).not.toContain('Contributed to');
-    expect(svg).toContain('Total PRs');
+    expect(svg).not.toContain('TOTAL ISSUES');
+    expect(svg).not.toContain('CONTRIBUTED TO');
+    expect(svg).toContain('TOTAL PRS');
   });
 
   it('omits icons when show_icons is false', () => {

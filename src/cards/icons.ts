@@ -11,6 +11,6 @@ export const icons = {
 
 export type IconName = keyof typeof icons;
 
-export function iconSvg(name: IconName): string {
-  return `<svg class="icon" viewBox="0 0 16 16" version="1.1" width="16" height="16"><path fill-rule="evenodd" d="${icons[name]}"/></svg>`;
+export function iconSvg(name: IconName, size = 16): string {
+  return `<svg class="icon" viewBox="0 0 16 16" version="1.1" width="${size}" height="${size}"><path fill-rule="evenodd" d="${icons[name]}"/></svg>`;
 }

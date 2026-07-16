@@ -13,7 +13,7 @@ export interface StatsCardOptions {
   customTitle?: string;
 }
 
-interface StatRow {
+interface StatTile {
   key: string;
   icon: IconName;
   label: string;
@@ -21,22 +21,24 @@ interface StatRow {
 }
 
 const CARD_WIDTH = 495;
-const RANK_RADIUS = 40;
+const PADDING = 25;
+const TILE_COLUMN_WIDTH = 165;
+const RANK_RADIUS = 42;
 const RANK_CIRCUMFERENCE = 2 * Math.PI * RANK_RADIUS;
 
-function rankCircleOffset(percentile: number): number {
-  const progress = 100 - clampValue(percentile, 0, 100);
-  return ((100 - progress) / 100) * RANK_CIRCUMFERENCE;
-}
-
-function statRowSvg(row: StatRow, index: number, options: StatsCardOptions): string {
-  const labelX = options.showIcons ? 25 : 0;
-  const icon = options.showIcons ? iconSvg(row.icon) : '';
+function tileSvg(tile: StatTile, index: number, options: StatsCardOptions): string {
+  const column = index % 2;
+  const row = Math.floor(index / 2);
+  const rowHeight = options.lineHeight + 21;
+  const icon = options.showIcons ? iconSvg(tile.icon, 12) : '';
+  const labelX = options.showIcons ? 17 : 0;
   return `
-    <g class="stagger" style="animation-delay: ${450 + index * 150}ms" transform="translate(25, ${index * options.lineHeight})">
-      ${icon}
-      <text class="stat bold" x="${labelX}" y="12.5">${row.label}:</text>
-      <text class="stat bold" x="${labelX + 195}" y="12.5" data-testid="${row.key}">${kFormatter(row.value)}</text>
+    <g transform="translate(${column * TILE_COLUMN_WIDTH}, ${row * rowHeight})">
+      <g class="stagger" style="animation-delay: ${300 + index * 120}ms">
+        ${icon}
+        <text class="stat-label" x="${labelX}" y="10">${encodeHTML(tile.label.toUpperCase())}</text>
+        <text class="stat-value" x="0" y="34" data-testid="${tile.key}">${kFormatter(tile.value)}</text>
+      </g>
     </g>`;
 }
 
@@ -44,99 +46,117 @@ export function renderStatsCard(stats: UserStats, options: StatsCardOptions): st
   const { theme } = options;
   const currentYear = new Date().getFullYear();
 
-  const allRows: StatRow[] = [
+  const allTiles: StatTile[] = [
     { key: 'stars', icon: 'star', label: 'Total Stars Earned', value: stats.totalStars },
     { key: 'commits', icon: 'commits', label: `Total Commits (${currentYear})`, value: stats.totalCommits },
     { key: 'prs', icon: 'prs', label: 'Total PRs', value: stats.totalPRs },
     { key: 'issues', icon: 'issues', label: 'Total Issues', value: stats.totalIssues },
     { key: 'contribs', icon: 'contribs', label: 'Contributed to (last year)', value: stats.contributedTo },
   ];
-  const rows = allRows.filter((row) => !options.hide.includes(row.key));
+  const tiles = allTiles.filter((tile) => !options.hide.includes(tile.key));
 
-  const height = Math.max(45 + (rows.length + 1) * options.lineHeight, options.hideRank ? 0 : 150);
+  const rowHeight = options.lineHeight + 21;
+  const rows = Math.ceil(tiles.length / 2);
+  const height = Math.max(62 + rows * rowHeight + 18, options.hideRank ? 0 : 170);
   const title = options.customTitle ?? `${stats.name}'s GitHub Stats`;
+  const percentile = clampValue(stats.rank.percentile, 0, 100);
 
-  const rankCircle = options.hideRank
+  const rankRing = options.hideRank
     ? ''
     : `
-    <g data-testid="rank-circle" transform="translate(400, ${height / 2 - 50})">
-      <circle class="rank-circle-rim" cx="-10" cy="8" r="${RANK_RADIUS}"/>
-      <circle class="rank-circle" cx="-10" cy="8" r="${RANK_RADIUS}"/>
-      <g class="rank-text">
-        <text x="-5" y="3" alignment-baseline="central" dominant-baseline="central" text-anchor="middle">
-          ${stats.rank.level}
-        </text>
-      </g>
+    <g data-testid="rank-circle" transform="translate(415, ${height / 2})">
+      <circle class="rank-ring-track" r="${RANK_RADIUS}"/>
+      <circle class="rank-ring" r="${RANK_RADIUS}" stroke="url(#rank-gradient)"/>
+      <text class="rank-level" y="-2" text-anchor="middle" dominant-baseline="central">${stats.rank.level}</text>
+      <text class="rank-sub" y="22" text-anchor="middle">TOP ${Math.round(percentile)}%</text>
     </g>`;
 
   const rankStyles = options.hideRank
     ? ''
     : `
-    .rank-text {
-      font: 800 24px 'Segoe UI', Ubuntu, Sans-Serif;
+    .rank-level {
+      font: 800 26px 'Segoe UI', Ubuntu, Sans-Serif;
       fill: #${theme.textColor};
-      animation: scaleInAnimation 0.3s ease-in-out forwards;
     }
-    .rank-circle-rim {
+    .rank-sub {
+      font: 600 8px 'Segoe UI', Ubuntu, Sans-Serif;
+      letter-spacing: 1px;
+      fill: #${theme.textColor};
+      opacity: 0.6;
+    }
+    .rank-ring-track {
       stroke: #${theme.titleColor};
       fill: none;
-      stroke-width: 6;
-      opacity: 0.2;
+      stroke-width: 5;
+      opacity: 0.15;
     }
-    .rank-circle {
-      stroke: #${theme.titleColor};
-      stroke-dasharray: ${RANK_CIRCUMFERENCE.toFixed(2)};
+    .rank-ring {
       fill: none;
-      stroke-width: 6;
+      stroke-width: 5;
       stroke-linecap: round;
-      opacity: 0.8;
-      transform-origin: -10px 8px;
+      stroke-dasharray: ${RANK_CIRCUMFERENCE.toFixed(2)};
       transform: rotate(-90deg);
-      animation: rankAnimation 1s forwards ease-in-out;
+      animation: ringFill 1s ease-in-out forwards;
     }
-    @keyframes rankAnimation {
+    @keyframes ringFill {
       from { stroke-dashoffset: ${RANK_CIRCUMFERENCE.toFixed(2)}; }
-      to { stroke-dashoffset: ${rankCircleOffset(stats.rank.percentile).toFixed(2)}; }
-    }
-    @keyframes scaleInAnimation {
-      from { transform: translate(-5px, 5px) scale(0); }
-      to { transform: translate(-5px, 5px) scale(1); }
+      to { stroke-dashoffset: ${((RANK_CIRCUMFERENCE * percentile) / 100).toFixed(2)}; }
     }`;
 
   return `
 <svg width="${CARD_WIDTH}" height="${height}" viewBox="0 0 ${CARD_WIDTH} ${height}" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="card-title">
   <title id="card-title">${encodeHTML(title)}</title>
+  <defs>
+    <linearGradient id="rank-gradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#${theme.titleColor}"/>
+      <stop offset="100%" stop-color="#${theme.iconColor}"/>
+    </linearGradient>
+  </defs>
   <style>
     .header {
-      font: 600 18px 'Segoe UI', Ubuntu, Sans-Serif;
+      font: 600 17px 'Segoe UI', Ubuntu, Sans-Serif;
       fill: #${theme.titleColor};
-      animation: fadeInAnimation 0.8s ease-in-out forwards;
+      animation: fadeIn 0.6s ease-in-out forwards;
     }
-    .stat {
-      font: 600 14px 'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif;
+    .stat-label {
+      font: 600 9px 'Segoe UI', Ubuntu, Sans-Serif;
+      letter-spacing: 0.5px;
       fill: #${theme.textColor};
+      opacity: 0.7;
     }
-    .stagger {
-      opacity: 0;
-      animation: fadeInAnimation 0.3s ease-in-out forwards;
+    .stat-value {
+      font: 700 21px 'Segoe UI', Ubuntu, 'Helvetica Neue', Sans-Serif;
+      fill: #${theme.textColor};
     }
     .icon {
       fill: #${theme.iconColor};
     }
-    @keyframes fadeInAnimation {
+    .stagger {
+      opacity: 0;
+      animation: fadeUp 0.5s ease-out forwards;
+    }
+    @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }${rankStyles}
+    @media (prefers-reduced-motion: reduce) {
+      .header, .stagger, .rank-ring {
+        animation-duration: 0s;
+        animation-delay: 0s;
+      }
+    }
   </style>
-  <rect data-testid="card-bg" x="0.5" y="0.5" rx="4.5" width="${CARD_WIDTH - 1}" height="99%" fill="#${theme.bgColor}" stroke="#${theme.borderColor}" stroke-opacity="${options.hideBorder ? 0 : 1}"/>
-  <g data-testid="card-title" transform="translate(25, 35)">
+  <rect data-testid="card-bg" x="0.5" y="0.5" rx="12" width="${CARD_WIDTH - 1}" height="${height - 1}" fill="#${theme.bgColor}" stroke="#${theme.borderColor}" stroke-opacity="${options.hideBorder ? 0 : 1}"/>
+  <g data-testid="card-title" transform="translate(${PADDING}, 34)">
     <text x="0" y="0" class="header">${encodeHTML(title)}</text>
   </g>
-  <g data-testid="main-card-body" transform="translate(0, 55)">
-    ${rankCircle}
-    <svg x="0" y="0">
-      ${rows.map((row, index) => statRowSvg(row, index, options)).join('')}
-    </svg>
+  <g data-testid="main-card-body" transform="translate(${PADDING}, 64)">
+    ${tiles.map((tile, index) => tileSvg(tile, index, options)).join('')}
   </g>
+  ${rankRing}
 </svg>`.trim();
 }

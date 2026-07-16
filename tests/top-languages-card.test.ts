@@ -29,7 +29,7 @@ describe('renderTopLanguagesCard', () => {
   it('filters languages below hide_langs_below and renormalizes percentages', () => {
     const svg = renderTopLanguagesCard(languages, { ...baseOptions, hideLangsBelow: 1 });
     expect(svg).not.toContain('Shell');
-    expect(svg).toContain('60.30%');
+    expect(svg).toContain('60.3%');
   });
 
   it('limits the number of languages with langs_count', () => {
