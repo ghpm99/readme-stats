@@ -15,8 +15,7 @@ const CARD_WIDTH = 300;
 const PADDING = 25;
 const INNER_WIDTH = CARD_WIDTH - PADDING * 2;
 const BAR_HEIGHT = 10;
-const SEGMENT_GAP = 2;
-const MIN_SEGMENT_WIDTH = 6;
+const MIN_SEGMENT_WIDTH = 4;
 const LEGEND_ROW_HEIGHT = 22;
 const LEGEND_COLUMN_WIDTH = 125;
 
@@ -25,17 +24,25 @@ function truncateName(name: string): string {
 }
 
 function barSegmentsSvg(languages: LanguageStat[]): string {
-  const available = INNER_WIDTH - SEGMENT_GAP * (languages.length - 1);
   let x = 0;
-  return languages
+  const segments = languages
     .map((lang, index) => {
-      const width = Math.max((available * clampValue(lang.percentage, 0, 100)) / 100, MIN_SEGMENT_WIDTH);
+      const isLast = index === languages.length - 1;
+      const width = isLast
+        ? INNER_WIDTH - x
+        : Math.max((INNER_WIDTH * clampValue(lang.percentage, 0, 100)) / 100, MIN_SEGMENT_WIDTH);
       const segment = `
-      <rect class="bar-seg" style="animation-delay: ${200 + index * 100}ms" x="${x.toFixed(2)}" y="0" width="${width.toFixed(2)}" height="${BAR_HEIGHT}" rx="${BAR_HEIGHT / 2}" fill="#${lang.color}"/>`;
-      x += width + SEGMENT_GAP;
+      <rect class="bar-seg" style="animation-delay: ${200 + index * 100}ms" x="${x.toFixed(2)}" y="0" width="${width.toFixed(2)}" height="${BAR_HEIGHT}" fill="#${lang.color}"/>`;
+      x += width;
       return segment;
     })
     .join('');
+  return `
+    <clipPath id="bar-clip">
+      <rect x="0" y="0" width="${INNER_WIDTH}" height="${BAR_HEIGHT}" rx="${BAR_HEIGHT / 2}"/>
+    </clipPath>
+    <g clip-path="url(#bar-clip)">${segments}
+    </g>`;
 }
 
 function legendItemSvg(lang: LanguageStat, index: number): string {
