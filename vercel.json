@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/top-langs/", "destination": "/api/top-langs" },
+    { "source": "/", "destination": "/api" }
+  ]
+}
