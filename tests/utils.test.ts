@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clampValue, encodeHTML, kFormatter, parseBoolean, parseList, parseNumber, renderError } from '../src/utils';
+import { clampValue, encodeHTML, kFormatter, parseBoolean, parseList, parseNumber, renderError } from '../src/utils.js';
 
 describe('kFormatter', () => {
   it('keeps numbers below 1000 as-is', () => {

@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { renderStatsCard } from '../src/cards/stats-card';
-import { fetchStats } from '../src/fetchers/stats';
-import { getTheme } from '../src/themes';
-import { clampValue, firstQueryValue, parseBoolean, parseList, parseNumber, renderError } from '../src/utils';
+import { renderStatsCard } from '../src/cards/stats-card.js';
+import { fetchStats } from '../src/fetchers/stats.js';
+import { getTheme } from '../src/themes.js';
+import { clampValue, firstQueryValue, parseBoolean, parseList, parseNumber, renderError } from '../src/utils.js';
 
 const CACHE_CONTROL = 'public, max-age=14400, s-maxage=14400, stale-while-revalidate=86400';
 

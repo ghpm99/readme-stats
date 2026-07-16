@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { GithubApiError, githubGraphQL } from '../src/fetchers/github';
-import { fetchStats } from '../src/fetchers/stats';
-import { fetchTopLanguages } from '../src/fetchers/top-languages';
+import { GithubApiError, githubGraphQL } from '../src/fetchers/github.js';
+import { fetchStats } from '../src/fetchers/stats.js';
+import { fetchTopLanguages } from '../src/fetchers/top-languages.js';
 
 function mockFetchResponse(body: unknown, ok = true, status = 200): void {
   vi.stubGlobal(

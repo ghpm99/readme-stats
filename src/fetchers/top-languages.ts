@@ -1,4 +1,4 @@
-import { githubGraphQL } from './github';
+import { githubGraphQL } from './github.js';
 
 export interface LanguageStat {
   name: string;

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { renderTopLanguagesCard, type TopLanguagesCardOptions } from '../src/cards/top-languages-card';
-import type { LanguageStat } from '../src/fetchers/top-languages';
-import { getTheme } from '../src/themes';
+import { renderTopLanguagesCard, type TopLanguagesCardOptions } from '../src/cards/top-languages-card.js';
+import type { LanguageStat } from '../src/fetchers/top-languages.js';
+import { getTheme } from '../src/themes.js';
 
 const languages: LanguageStat[] = [
   { name: 'TypeScript', color: '3178c6', size: 6000, percentage: 60 },

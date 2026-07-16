@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { renderStatsCard, type StatsCardOptions } from '../src/cards/stats-card';
-import type { UserStats } from '../src/fetchers/stats';
-import { getTheme } from '../src/themes';
+import { renderStatsCard, type StatsCardOptions } from '../src/cards/stats-card.js';
+import type { UserStats } from '../src/fetchers/stats.js';
+import { getTheme } from '../src/themes.js';
 
 const stats: UserStats = {
   name: 'ghpm99',

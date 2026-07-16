@@ -1,8 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { renderTopLanguagesCard } from '../src/cards/top-languages-card';
-import { fetchTopLanguages } from '../src/fetchers/top-languages';
-import { getTheme } from '../src/themes';
-import { clampValue, firstQueryValue, parseBoolean, parseList, parseNumber, renderError } from '../src/utils';
+import { renderTopLanguagesCard } from '../src/cards/top-languages-card.js';
+import { fetchTopLanguages } from '../src/fetchers/top-languages.js';
+import { getTheme } from '../src/themes.js';
+import { clampValue, firstQueryValue, parseBoolean, parseList, parseNumber, renderError } from '../src/utils.js';
 
 const CACHE_CONTROL = 'public, max-age=14400, s-maxage=14400, stale-while-revalidate=86400';
 

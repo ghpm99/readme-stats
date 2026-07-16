@@ -1,7 +1,7 @@
-import type { UserStats } from '../fetchers/stats';
-import type { Theme } from '../themes';
-import { clampValue, encodeHTML, kFormatter } from '../utils';
-import { iconSvg, type IconName } from './icons';
+import type { UserStats } from '../fetchers/stats.js';
+import type { Theme } from '../themes.js';
+import { clampValue, encodeHTML, kFormatter } from '../utils.js';
+import { iconSvg, type IconName } from './icons.js';
 
 export interface StatsCardOptions {
   theme: Theme;

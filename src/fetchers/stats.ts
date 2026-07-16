@@ -1,5 +1,5 @@
-import { calculateRank, type Rank } from '../rank';
-import { githubGraphQL } from './github';
+import { calculateRank, type Rank } from '../rank.js';
+import { githubGraphQL } from './github.js';
 
 export interface UserStats {
   name: string;

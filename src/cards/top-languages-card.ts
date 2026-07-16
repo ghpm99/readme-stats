@@ -1,6 +1,6 @@
-import type { LanguageStat } from '../fetchers/top-languages';
-import type { Theme } from '../themes';
-import { clampValue, encodeHTML } from '../utils';
+import type { LanguageStat } from '../fetchers/top-languages.js';
+import type { Theme } from '../themes.js';
+import { clampValue, encodeHTML } from '../utils.js';
 
 export interface TopLanguagesCardOptions {
   theme: Theme;

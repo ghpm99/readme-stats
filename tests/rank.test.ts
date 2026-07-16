@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateRank } from '../src/rank';
+import { calculateRank } from '../src/rank.js';
 
 describe('calculateRank', () => {
   it('gives the worst percentile for an empty profile', () => {
